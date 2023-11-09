@@ -164,23 +164,31 @@ int Collide(Contact* contacts, Body* bodyA, Body* bodyB)
 
 	Mat22 RotA(bodyA->rotation), RotB(bodyB->rotation);
 
+	// Rotate anything into A's local space
 	Mat22 RotAT = RotA.Transpose();
+	// Rotate anything into B's local space
 	Mat22 RotBT = RotB.Transpose();
 
 	Vec2 dp = posB - posA;
 	Vec2 dA = RotAT * dp;
 	Vec2 dB = RotBT * dp;
 
+	// This matrix rotates anything from B's local space into A's local space
 	Mat22 C = RotAT * RotB;
 	Mat22 absC = Abs(C);
+	// This matrix rotates anything from A's local space into B's local space
 	Mat22 absCT = absC.Transpose();
 
+	// SAT(Separating Axis Theorem)
+
 	// Box A faces
+	// This does a dot product by using the transformation matrix and matrix multiplication rules. It's projecting along all the faces.
 	Vec2 faceA = Abs(dA) - hA - absC * hB;
 	if (faceA.x > 0.0f || faceA.y > 0.0f)
 		return 0;
 
 	// Box B faces
+	// This does the same thing just for B instead of A
 	Vec2 faceB = Abs(dB) - absCT * hA - hB;
 	if (faceB.x > 0.0f || faceB.y > 0.0f)
 		return 0;
@@ -221,6 +229,8 @@ int Collide(Contact* contacts, Body* bodyA, Body* bodyB)
 	}
 
 	// Setup clipping plane data based on the separating axis
+	// The front normal will be the normal in the direction of the collision
+	// The side normal is perpendicular to the front normal
 	Vec2 frontNormal, sideNormal;
 	ClipVertex incidentEdge[2];
 	float front, negSide, posSide;
