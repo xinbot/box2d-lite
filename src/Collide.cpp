@@ -97,6 +97,8 @@ static void ComputeIncidentEdge(ClipVertex c[2], const Vec2& h, const Vec2& pos,
 {
 	// The normal is from the reference box. Convert it
 	// to the incident boxe's frame and flip sign.
+
+	// Rotate the normal to the other box's local space
 	Mat22 RotT = Rot.Transpose();
 	Vec2 n = -(RotT * normal);
 	Vec2 nAbs = Abs(n);
@@ -148,6 +150,7 @@ static void ComputeIncidentEdge(ClipVertex c[2], const Vec2& h, const Vec2& pos,
 		}
 	}
 
+	// Rotate the result back out of local box space into world space
 	c[0].v = pos + Rot * c[0].v;
 	c[1].v = pos + Rot * c[1].v;
 }
@@ -322,6 +325,7 @@ int Collide(Contact* contacts, Body* bodyA, Body* bodyB)
 	{
 		float separation = Dot(frontNormal, clipPoints2[i].v) - front;
 
+		// Only collect the contacts that are actually penetrating on the normal's axis and discard any extranneous points
 		if (separation <= 0)
 		{
 			contacts[numContacts].separation = separation;
