@@ -54,6 +54,7 @@ void Flip(FeaturePair& fp)
 	Swap(fp.e.outEdge1, fp.e.outEdge2);
 }
 
+// The reference edge will be used to clip the incident edge vertices to generate the contact manifold.
 int ClipSegmentToLine(ClipVertex vOut[2], ClipVertex vIn[2],
 					  const Vec2& normal, float offset, char clipEdge)
 {
@@ -236,6 +237,7 @@ int Collide(Contact* contacts, Body* bodyA, Body* bodyB)
 	// The front normal will be the normal in the direction of the collision
 	// The side normal is perpendicular to the front normal
 	Vec2 frontNormal, sideNormal;
+	// Contains incident edge and reference edge. The reference edge is the edge most perpendicular to the spearation normal.
 	ClipVertex incidentEdge[2];
 	float front, negSide, posSide;
 	char negEdge, posEdge;

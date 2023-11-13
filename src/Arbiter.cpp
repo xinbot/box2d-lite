@@ -96,6 +96,7 @@ void Arbiter::PreStep(float inv_dt)
 		float rn1 = Dot(r1, c->normal);
 		float rn2 = Dot(r2, c->normal);
 		float kNormal = body1->invMass + body2->invMass;
+		// The dot product of a vector with itself is the square of its magnitude.
 		kNormal += body1->invI * (Dot(r1, r1) - rn1 * rn1) + body2->invI * (Dot(r2, r2) - rn2 * rn2);
 		c->massNormal = 1.0f / kNormal;
 
@@ -104,7 +105,7 @@ void Arbiter::PreStep(float inv_dt)
 		float rt2 = Dot(r2, tangent);
 		float kTangent = body1->invMass + body2->invMass;
 		kTangent += body1->invI * (Dot(r1, r1) - rt1 * rt1) + body2->invI * (Dot(r2, r2) - rt2 * rt2);
-		c->massTangent = 1.0f /  kTangent;
+		c->massTangent = 1.0f / kTangent;
 
 		c->bias = -k_biasFactor * inv_dt * Min(0.0f, c->separation + k_allowedPenetration);
 
